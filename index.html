@@ -154,7 +154,7 @@
             </div>
 
             <div id="twitch-grid" class="stream-grid">
-                </div>
+            </div>
 
             <p class="text-zinc-600 text-center text-[10px] mt-10 font-bold uppercase tracking-widest">* Stream rendering optimized for recoiledits.github.io</p>
         </section>
@@ -320,7 +320,7 @@
 
         // DYNAMIC TWITCH STREAMER LOGIC
         const streamers = [
-            'RecoilEdits', 
+            'RecoiledEdits', 
             'kyalami_rs3', 
             'sterfrie15', 
             'tyrantslayerstudiosct', 
@@ -330,7 +330,6 @@
         ];
 
         const twitchGrid = document.getElementById('twitch-grid');
-        const currentDomain = window.location.hostname; // Auto-detects domain for 'parent' parameter
 
         streamers.forEach(channel => {
             const card = document.createElement('div');
@@ -341,9 +340,9 @@
             label.className = 'streamer-label';
             label.innerText = channel;
 
-            // The iframe with correct parent and autoplay/mute logic
+            // Hardcoded parents to guarantee it works on GitHub AND Local Testing without breaking
             const iframe = document.createElement('iframe');
-            iframe.src = `https://player.twitch.tv/?channel=${channel}&parent=${currentDomain}&parent=recoiledits.github.io&autoplay=true&muted=true`;
+            iframe.src = `https://player.twitch.tv/?channel=${channel}&parent=localhost&parent=recoiledits.github.io&autoplay=true&muted=true`;
             iframe.allowFullscreen = true;
             
             card.appendChild(label);
