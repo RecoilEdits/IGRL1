@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@widgetbot/html-embed"></script>
     
     <style>
-        :root { --ig-blue: #0084ff; --ig-red: #ff0040; --ig-bg: #050505; }
+        :root { --ig-blue: #0084ff; --ig-red: #ff0040; --ig-bg: #050505; --ig-twitch: #a970ff; }
         body { background-color: var(--ig-bg); color: #e4e4e7; font-family: 'Inter', sans-serif; scroll-behavior: smooth; overflow-x: hidden; }
         .font-racing { font-family: 'Orbitron', sans-serif; }
         .font-impact { font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; }
@@ -27,20 +27,27 @@
         .iframe-viewport { width: 100%; height: 780px; overflow: hidden; position: relative; border-radius: 12px; background: #fff; border: 1px solid #222; }
         .iframe-viewport iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         
-        /* Streamer Hover Logic */
-        .stream-card { position: relative; transition: transform 0.3s ease; }
-        .stream-card:hover { transform: scale(1.01); border-color: var(--ig-blue); }
+        /* Streamer Section Styles */
+        .stream-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; }
+        .stream-card { position: relative; transition: all 0.3s ease; border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; background: #111; border: 1px solid #222; }
+        .stream-card:hover { transform: translateY(-5px); border-color: var(--ig-twitch); box-shadow: 0 10px 30px rgba(169, 112, 255, 0.2); }
+        .stream-card iframe { width: 100%; height: 100%; border: none; }
         
         .streamer-label { 
             position: absolute; 
             top: 15px; 
             left: 15px; 
             z-index: 20; 
-            opacity: 0; 
-            transition: 0.3s ease; 
+            background: rgba(0,0,0,0.8);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid rgba(255,255,255,0.1);
             pointer-events: none;
         }
-        .stream-card:hover .streamer-label { opacity: 1; }
 
         /* Header Countdowns */
         .header-timer-box { border-left: 2px solid rgba(255,255,255,0.1); padding-left: 20px; min-width: 240px; }
@@ -140,45 +147,16 @@
             <h2 class="font-impact text-6xl italic text-white mb-2 text-center">IGRL <span class="text-purple-500">STREAMERS</span></h2>
             <p class="text-zinc-500 text-center text-xs font-bold uppercase tracking-widest mb-10">Catch the action live or watch past broadcasts</p>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                
-                <div class="stream-card glass rounded-xl overflow-hidden aspect-video border border-zinc-800">
-                    <div class="streamer-label bg-black/80 px-3 py-1 rounded text-[10px] font-black text-white uppercase tracking-widest border border-zinc-700">RecoilEdits</div>
-                    <iframe src="https://player.twitch.tv/?channel=recoiledits&parent=recoiledits.github.io&parent=localhost" frameborder="0" allowfullscreen="true" scrolling="no" class="w-full h-full"></iframe>
-                </div>
-
-                <div class="stream-card glass rounded-xl overflow-hidden aspect-video border border-zinc-800">
-                    <div class="streamer-label bg-black/80 px-3 py-1 rounded text-[10px] font-black text-white uppercase tracking-widest border border-zinc-700">kyalami_rs3</div>
-                    <iframe src="https://player.twitch.tv/?channel=kyalami_rs3&parent=recoiledits.github.io&parent=localhost" frameborder="0" allowfullscreen="true" scrolling="no" class="w-full h-full"></iframe>
-                </div>
-
-                <div class="stream-card glass rounded-xl overflow-hidden aspect-video border border-zinc-800">
-                    <div class="streamer-label bg-black/80 px-3 py-1 rounded text-[10px] font-black text-white uppercase tracking-widest border border-zinc-700">sterfrie15</div>
-                    <iframe src="https://player.twitch.tv/?channel=sterfrie15&parent=recoiledits.github.io&parent=localhost" frameborder="0" allowfullscreen="true" scrolling="no" class="w-full h-full"></iframe>
-                </div>
-
-                <div class="stream-card glass rounded-xl overflow-hidden aspect-video border border-zinc-800">
-                    <div class="streamer-label bg-black/80 px-3 py-1 rounded text-[10px] font-black text-white uppercase tracking-widest border border-zinc-700">TyrantSlayer</div>
-                    <iframe src="https://player.twitch.tv/?channel=tyrantslayerstudiosct&parent=recoiledits.github.io&parent=localhost" frameborder="0" allowfullscreen="true" scrolling="no" class="w-full h-full"></iframe>
-                </div>
-
-                <div class="stream-card glass rounded-xl overflow-hidden aspect-video border border-zinc-800">
-                    <div class="streamer-label bg-black/80 px-3 py-1 rounded text-[10px] font-black text-white uppercase tracking-widest border border-zinc-700">pumpkinswag</div>
-                    <iframe src="https://player.twitch.tv/?channel=pumpkinswag&parent=recoiledits.github.io&parent=localhost" frameborder="0" allowfullscreen="true" scrolling="no" class="w-full h-full"></iframe>
-                </div>
-
-                <div class="stream-card glass rounded-xl overflow-hidden aspect-video border border-zinc-800">
-                    <div class="streamer-label bg-black/80 px-3 py-1 rounded text-[10px] font-black text-white uppercase tracking-widest border border-zinc-700">kilohq</div>
-                    <iframe src="https://player.twitch.tv/?channel=kilohq&parent=recoiledits.github.io&parent=localhost" frameborder="0" allowfullscreen="true" scrolling="no" class="w-full h-full"></iframe>
-                </div>
-
-                <div class="stream-card glass rounded-xl overflow-hidden aspect-video border border-zinc-800">
-                    <div class="streamer-label bg-black/80 px-3 py-1 rounded text-[10px] font-black text-white uppercase tracking-widest border border-zinc-700">TheDcZac</div>
-                    <iframe src="https://player.twitch.tv/?channel=thedczac&parent=recoiledits.github.io&parent=localhost" frameborder="0" allowfullscreen="true" scrolling="no" class="w-full h-full"></iframe>
-                </div>
-
+            <div class="bg-purple-600/10 border border-purple-500/30 p-4 rounded-lg mb-8 text-center">
+                <p class="text-purple-400 text-[10px] font-black uppercase tracking-widest">
+                    🔊 BROWSER TIP: Streams autoplay muted. Click the volume icon on the player to enable racing audio!
+                </p>
             </div>
-            <p class="text-zinc-600 text-center text-[10px] mt-6 font-bold uppercase tracking-widest">* Stream rendering optimized for recoiledits.github.io</p>
+
+            <div id="twitch-grid" class="stream-grid">
+                </div>
+
+            <p class="text-zinc-600 text-center text-[10px] mt-10 font-bold uppercase tracking-widest">* Stream rendering optimized for recoiledits.github.io</p>
         </section>
 
         <section id="full-schedule" class="py-16 px-10 max-w-5xl mx-auto border-t border-zinc-900">
@@ -339,6 +317,39 @@
             iframe.onload = () => { status.classList.add('hidden'); };
             output.appendChild(container);
         }
+
+        // DYNAMIC TWITCH STREAMER LOGIC
+        const streamers = [
+            'RecoiledEdits', 
+            'kyalami_rs3', 
+            'sterfrie15', 
+            'tyrantslayerstudiosct', 
+            'pumpkinswag', 
+            'kilohq', 
+            'thedczac'
+        ];
+
+        const twitchGrid = document.getElementById('twitch-grid');
+        const currentDomain = window.location.hostname; // Auto-detects domain for 'parent' parameter
+
+        streamers.forEach(channel => {
+            const card = document.createElement('div');
+            card.className = 'stream-card';
+            
+            // The label on top of the video
+            const label = document.createElement('div');
+            label.className = 'streamer-label';
+            label.innerText = channel;
+
+            // The iframe with correct parent and autoplay/mute logic
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://player.twitch.tv/?channel=${channel}&parent=${currentDomain}&parent=recoiledits.github.io&autoplay=true&muted=true`;
+            iframe.allowFullscreen = true;
+            
+            card.appendChild(label);
+            card.appendChild(iframe);
+            twitchGrid.appendChild(card);
+        });
     </script>
 </body>
 </html>
