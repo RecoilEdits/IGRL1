@@ -16,28 +16,23 @@
         .font-racing { font-family: 'Orbitron', sans-serif; }
         .font-impact { font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; }
         
-        /* Glass Effect */
         .glass { background: rgba(20, 20, 20, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
         
-        /* Sidebar Styles */
         .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-radius: 8px; color: #a1a1aa; transition: 0.3s; cursor: pointer; text-decoration: none; font-size: 13px; font-weight: 700; text-transform: uppercase; }
         .sidebar-item:hover, .active-tab { background: rgba(0, 132, 255, 0.1); color: var(--ig-blue) !important; border-left: 4px solid var(--ig-blue); }
         
-        /* Terminal Viewport */
         .iframe-viewport { width: 100%; height: 780px; overflow: hidden; position: relative; border-radius: 12px; background: #fff; border: 1px solid #222; }
         .iframe-viewport iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         
-        /* Stream Section Styles */
-        .stream-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 24px; }
+        .stream-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; }
         .stream-card { position: relative; transition: all 0.3s ease; border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; background: #111; border: 1px solid #222; }
         .stream-card:hover { transform: translateY(-5px); border-color: var(--ig-twitch); box-shadow: 0 10px 30px rgba(169, 112, 255, 0.2); }
-        .stream-card iframe { width: 100%; height: 100%; border: none; }
         
         .streamer-label { 
             position: absolute; 
             top: 15px; 
             left: 15px; 
-            z-index: 20; 
+            z-index: 40; 
             background: rgba(0,0,0,0.8);
             padding: 4px 12px;
             border-radius: 4px;
@@ -49,12 +44,10 @@
             pointer-events: none;
         }
 
-        /* Header Countdowns */
         .header-timer-box { border-left: 2px solid rgba(255,255,255,0.1); padding-left: 20px; min-width: 240px; }
         .header-timer-box.xfinity { border-left-color: var(--ig-blue); }
         .header-timer-box.cup { border-left-color: var(--ig-red); }
 
-        /* Vertical Schedule */
         .schedule-row { display: grid; grid-template-columns: 100px 1fr 120px; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; }
         
         .loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--ig-blue); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: inline-block; }
@@ -66,12 +59,12 @@
     <aside class="w-72 bg-[#0a0a0a] border-r border-zinc-800 flex-col hidden lg:flex sticky top-0 h-screen z-50">
         <div class="p-8 text-center">
             <img src="https://i.ibb.co/PvvVsJ9f/logo.png" class="w-full mb-4" alt="IGRL Logo">
-            <p class="text-[10px] font-black tracking-[0.4em] text-zinc-600 uppercase italic">Race Control v2.0</p>
+            <p class="text-[10px] font-black tracking-[0.4em] text-zinc-600 uppercase italic">Race Control v1.5</p>
         </div>
         <nav class="flex-1 px-4 space-y-1">
             <a href="#home" class="sidebar-item active-tab"><i class="fas fa-desktop w-5"></i> Dashboard</a>
-            <a href="#broadcast" class="sidebar-item"><i class="fas fa-tower-broadcast w-5"></i> Live Command Center</a>
             <a href="#live-data" class="sidebar-item"><i class="fas fa-terminal w-5"></i> Data Terminal</a>
+            <a href="#streamers" class="sidebar-item"><i class="fas fa-video w-5"></i> Streamers</a>
             <a href="#full-schedule" class="sidebar-item"><i class="fas fa-calendar-alt w-5"></i> Season Schedule</a>
             <a href="#rules" class="sidebar-item"><i class="fas fa-gavel w-5"></i> IGRCC Rules</a>
             <div class="pt-8 px-2 text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-4">Official Links</div>
@@ -120,27 +113,6 @@
             </div>
         </section>
 
-        <section id="broadcast" class="py-16 px-10 border-t border-zinc-900 bg-black/30">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex items-center gap-4 mb-8">
-                    <div class="h-2 w-2 rounded-full bg-red-600 animate-pulse"></div>
-                    <h2 class="font-impact text-6xl italic text-white">LIVE <span class="text-indigo-500">BROADCASTS</span></h2>
-                </div>
-
-                <div class="stream-grid">
-                    <div class="stream-card">
-                        <span class="streamer-label text-red-500"><i class="fas fa-satellite mr-2"></i> Official Race Control</span>
-                        <iframe src="https://player.twitch.tv/?channel=irongripracingleague&parent=irongripracingleague.github.io&autoplay=false" allowfullscreen></iframe>
-                    </div>
-
-                    <div class="stream-card">
-                        <span class="streamer-label text-indigo-400"><i class="fas fa-camera mr-2"></i> Multi-Angle Feed</span>
-                        <iframe src="https://player.twitch.tv/?channel=highlimitgaming&parent=irongripracingleague.github.io&autoplay=false" allowfullscreen></iframe>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <section id="live-data" class="py-12 px-10 max-w-7xl mx-auto border-t border-zinc-900">
             <h2 class="font-impact text-6xl italic text-white mb-8">DATA <span class="text-blue-500">TERMINAL</span></h2>
             <div class="flex flex-wrap gap-2 mb-8">
@@ -164,48 +136,20 @@
             </div>
         </section>
 
-        <section id="full-schedule" class="py-16 px-10 max-w-5xl mx-auto border-t border-zinc-900">
-            <h2 class="font-impact text-6xl italic text-white mb-10 text-center">SEASON <span class="text-blue-500">SCHEDULE</span></h2>
-            <div class="space-y-12">
-                <div class="glass rounded-xl overflow-hidden border border-blue-900/30">
-                    <div class="bg-blue-600 p-4 flex justify-between items-center">
-                        <h3 class="font-impact text-3xl italic text-white">XFINITY SERIES</h3>
-                        <span class="font-bold text-xs uppercase tracking-widest">Fridays @ 10PM EST</span>
-                    </div>
-                    <div class="p-2">
-                        <div class="schedule-row font-black text-zinc-500 text-[10px] uppercase tracking-widest"><span>Date</span><span>Track</span><span>Status</span></div>
-                        <div class="schedule-row"><span>Apr 3</span><b class="text-white">Daytona</b><span class="text-zinc-500 text-[10px] font-bold">COMPLETED</span></div>
-                        <div class="schedule-row bg-blue-500/10"><span>Apr 10</span><b class="text-blue-400">Las Vegas</b><span class="text-blue-500 text-[10px] font-bold">UP NEXT</span></div>
-                        </div>
+        <section id="streamers" class="py-16 px-10 max-w-7xl mx-auto border-t border-zinc-900">
+            <h2 class="font-impact text-6xl italic text-white mb-2 text-center">IGRL <span class="text-purple-500">STREAMERS</span></h2>
+            <p class="text-zinc-500 text-center text-xs font-bold uppercase tracking-widest mb-10">Performance Optimized: Click a card to initialize stream</p>
+            
+            <div id="twitch-grid" class="stream-grid">
                 </div>
-                <div class="glass rounded-xl overflow-hidden border border-red-900/30">
-                    <div class="bg-red-600 p-4 flex justify-between items-center">
-                        <h3 class="font-impact text-3xl italic text-white">CUP SERIES</h3>
-                        <span class="font-bold text-xs uppercase tracking-widest">Saturdays @ 10PM EST</span>
-                    </div>
-                    <div class="p-2">
-                        <div class="schedule-row font-black text-zinc-500 text-[10px] uppercase tracking-widest"><span>Date</span><span>Track</span><span>Status</span></div>
-                        <div class="schedule-row"><span>Apr 4</span><b class="text-white">Daytona</b><span class="text-zinc-500 text-[10px] font-bold">COMPLETED</span></div>
-                        <div class="schedule-row bg-red-500/10"><span>Apr 11</span><b class="text-red-400">Las Vegas</b><span class="text-red-500 text-[10px] font-bold">UP NEXT</span></div>
-                        </div>
-                </div>
-            </div>
         </section>
 
+        <section id="full-schedule" class="py-16 px-10 max-w-5xl mx-auto border-t border-zinc-900">
+            <h2 class="font-impact text-6xl italic text-white mb-10 text-center">SEASON <span class="text-blue-500">SCHEDULE</span></h2>
+            </section>
+
         <section id="rules" class="py-16 px-10 max-w-7xl mx-auto border-t border-zinc-900">
-            <h2 class="font-impact text-6xl italic text-white text-center mb-12">IGRCC <span class="text-red-500">CODE OF CONDUCT</span></h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="glass p-6 rounded-xl border-t-4 border-blue-500">
-                    <h3 class="font-impact text-2xl text-white mb-4 italic"><i class="fas fa-video-game mr-2"></i> RACE SETTINGS</h3>
-                    <ul class="text-zinc-400 text-xs space-y-2 uppercase font-bold tracking-tight">
-                        <li class="flex justify-between"><span>Race Length:</span> <span class="text-white">50%</span></li>
-                        <li class="flex justify-between"><span>Tire/Fuel:</span> <span class="text-white">2X</span></li>
-                        <li class="flex justify-between"><span>Yellow Flags:</span> <span class="text-white">Relaxed</span></li>
-                        <li class="flex justify-between"><span>Custom Setups:</span> <span class="text-white">ALLOWED</span></li>
-                    </ul>
-                </div>
-                </div>
-        </section>
+             </section>
 
     </main>
 
@@ -257,12 +201,45 @@
             output.appendChild(container);
         }
 
-        // Sidebar active state logic
-        document.querySelectorAll('.sidebar-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active-tab'));
-                this.classList.add('active-tab');
-            });
+        // --- NEW PERFORMANCE-FIRST TWITCH LOGIC ---
+        const streamers = ['RecoilEdits', 'kyalami_rs3', 'sterfrie15', 'tyrantslayerstudiosct', 'pumpkinswag', 'kilohq', 'thedczac'];
+        const twitchGrid = document.getElementById('twitch-grid');
+
+        streamers.forEach(channel => {
+            const card = document.createElement('div');
+            card.className = 'stream-card cursor-pointer group';
+            
+            // Label stays visible always
+            const label = document.createElement('div');
+            label.className = 'streamer-label';
+            label.innerText = channel;
+
+            // Preview Overlay (Zero FPS Drain)
+            const preview = document.createElement('div');
+            preview.className = 'absolute inset-0 bg-zinc-900 flex flex-col items-center justify-center z-30 transition group-hover:bg-zinc-800';
+            preview.innerHTML = `
+                <div class="text-purple-500 text-4xl mb-2 group-hover:scale-110 transition"><i class="fas fa-play-circle"></i></div>
+                <div class="text-white font-black text-xs tracking-widest uppercase">INITIALIZE STREAM</div>
+            `;
+
+            const iframeContainer = document.createElement('div');
+            iframeContainer.className = 'w-full h-full';
+
+            card.appendChild(label);
+            card.appendChild(preview);
+            card.appendChild(iframeContainer);
+            twitchGrid.appendChild(card);
+
+            // Load iframe only on click to prevent 1 FPS lag
+            card.addEventListener('click', () => {
+                preview.style.display = 'none';
+                const iframe = document.createElement('iframe');
+                // Added cache buster v=timestamp
+                iframe.src = `https://player.twitch.tv/?channel=${channel}&parent=recoiledits.github.io&parent=localhost&autoplay=true&muted=false&v=${new Date().getTime()}`;
+                iframe.className = "w-full h-full border-none";
+                iframe.allowFullscreen = true;
+                iframeContainer.appendChild(iframe);
+            }, { once: true });
         });
     </script>
 </body>
