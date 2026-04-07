@@ -28,7 +28,6 @@
         .iframe-viewport iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         
         /* Streamer Section Styles */
-        /* Set minmax to 400px to satisfy Twitch's minimum width requirement */
         .stream-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; }
         .stream-card { position: relative; transition: all 0.3s ease; border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; background: #111; border: 1px solid #222; }
         .stream-card:hover { transform: translateY(-5px); border-color: var(--ig-twitch); box-shadow: 0 10px 30px rgba(169, 112, 255, 0.2); }
@@ -150,12 +149,12 @@
             
             <div class="bg-purple-600/10 border border-purple-500/30 p-4 rounded-lg mb-8 text-center">
                 <p class="text-purple-400 text-[10px] font-black uppercase tracking-widest">
-                    🔊 BROWSER TIP: Streams autoplay muted. Click the volume icon on the player to enable racing audio!
+                    📺 Click the Play button on any streamer card to start watching!
                 </p>
             </div>
 
             <div id="twitch-grid" class="stream-grid">
-                </div>
+            </div>
 
             <p class="text-zinc-600 text-center text-[10px] mt-10 font-bold uppercase tracking-widest">* Stream rendering optimized for recoiledits.github.io</p>
         </section>
@@ -236,7 +235,7 @@
                     </ul>
                 </div>
                 <div class="glass p-6 rounded-xl border-t-4 border-zinc-400">
-                    <h3 class="font-impact text-2xl text-white mb-4 italic"><i class="fas fa-car-side mr-2"></i> TEAMS & CARS</h3>
+                    <h3 class="font-impact text-2xl text-white mb-4 italic"><i class="fas fa-1234 mr-2"></i> TEAMS & CARS</h3>
                     <div class="text-[11px] text-zinc-400 space-y-3 font-bold uppercase">
                         <p>Drivers claim an active NASCAR number from Cup, Xfinity, Truck, or ARCA.</p>
                         <div class="space-y-1 p-3 bg-black/40 rounded border border-zinc-800">
@@ -248,7 +247,7 @@
                 </div>
 
                 <div class="glass p-6 rounded-xl border-t-4 border-green-500">
-                    <h3 class="font-impact text-2xl text-white mb-4 italic"><i class="fas fa-flag-checkered mr-2"></i> DRIVING STANDARDS</h3>
+                    <h3 class="font-impact text-2xl text-white mb-4 italic"><i class="fas fa-red-car mr-2"></i> DRIVING STANDARDS</h3>
                     <div class="text-[11px] space-y-4">
                         <div>
                             <p class="text-green-500 font-black mb-1 italic">MUST DO:</p>
@@ -319,7 +318,7 @@
             output.appendChild(container);
         }
 
-        // DYNAMIC TWITCH STREAMER LOGIC (FIXED FOR GITHUB PAGES)
+        // DYNAMIC TWITCH STREAMER LOGIC
         const streamers = [
             'RecoilEdits', 
             'kyalami_rs3', 
@@ -340,12 +339,18 @@
             label.className = 'streamer-label';
             label.innerText = channel;
 
-            // FIX: Added multiple parents to handle local dev AND GitHub production
             const iframe = document.createElement('iframe');
-            iframe.src = `https://player.twitch.tv/?channel=${channel}&parent=localhost&parent=recoiledits.github.io&autoplay=true&muted=true&quality=360p`;
+            
+            // Constructing URL to avoid autoplay and allow GitHub environment
+            const streamUrl = new URL("https://player.twitch.tv/");
+            streamUrl.searchParams.set("channel", channel);
+            streamUrl.searchParams.set("parent", "recoiledits.github.io");
+            streamUrl.searchParams.append("parent", "localhost");
+            streamUrl.searchParams.set("autoplay", "false"); // DISABLES AUTOPLAY
+            streamUrl.searchParams.set("muted", "false");    // ENABLES SOUND WHEN PLAYED
+
+            iframe.src = streamUrl.toString();
             iframe.allowFullscreen = true;
-            iframe.setAttribute('height', '300');
-            iframe.setAttribute('width', '400');
             
             card.appendChild(label);
             card.appendChild(iframe);
