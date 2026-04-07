@@ -16,23 +16,28 @@
         .font-racing { font-family: 'Orbitron', sans-serif; }
         .font-impact { font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; }
         
+        /* Glass Effect */
         .glass { background: rgba(20, 20, 20, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
         
+        /* Sidebar Styles */
         .sidebar-item { display: flex; align-items: center; gap: 12px; padding: 12px 18px; border-radius: 8px; color: #a1a1aa; transition: 0.3s; cursor: pointer; text-decoration: none; font-size: 13px; font-weight: 700; text-transform: uppercase; }
         .sidebar-item:hover, .active-tab { background: rgba(0, 132, 255, 0.1); color: var(--ig-blue) !important; border-left: 4px solid var(--ig-blue); }
         
+        /* Terminal Viewport */
         .iframe-viewport { width: 100%; height: 780px; overflow: hidden; position: relative; border-radius: 12px; background: #fff; border: 1px solid #222; }
         .iframe-viewport iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
         
+        /* Streamer Section Styles */
         .stream-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; }
         .stream-card { position: relative; transition: all 0.3s ease; border-radius: 12px; overflow: hidden; aspect-ratio: 16/9; background: #111; border: 1px solid #222; }
         .stream-card:hover { transform: translateY(-5px); border-color: var(--ig-twitch); box-shadow: 0 10px 30px rgba(169, 112, 255, 0.2); }
+        .stream-card iframe { width: 100%; height: 100%; border: none; }
         
         .streamer-label { 
             position: absolute; 
             top: 15px; 
             left: 15px; 
-            z-index: 40; 
+            z-index: 20; 
             background: rgba(0,0,0,0.8);
             padding: 4px 12px;
             border-radius: 4px;
@@ -44,10 +49,12 @@
             pointer-events: none;
         }
 
+        /* Header Countdowns */
         .header-timer-box { border-left: 2px solid rgba(255,255,255,0.1); padding-left: 20px; min-width: 240px; }
         .header-timer-box.xfinity { border-left-color: var(--ig-blue); }
         .header-timer-box.cup { border-left-color: var(--ig-red); }
 
+        /* Vertical Schedule */
         .schedule-row { display: grid; grid-template-columns: 100px 1fr 120px; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.2s; }
         
         .loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--ig-blue); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: inline-block; }
@@ -138,20 +145,20 @@
 
         <section id="streamers" class="py-16 px-10 max-w-7xl mx-auto border-t border-zinc-900">
             <h2 class="font-impact text-6xl italic text-white mb-2 text-center">IGRL <span class="text-purple-500">STREAMERS</span></h2>
-            <p class="text-zinc-500 text-center text-xs font-bold uppercase tracking-widest mb-10">Performance Optimized: Click a card to initialize stream</p>
+            <p class="text-zinc-500 text-center text-xs font-bold uppercase tracking-widest mb-10">Catch the action live or watch past broadcasts</p>
             
-            <div id="twitch-grid" class="stream-grid">
-                </div>
+            <div class="bg-purple-600/10 border border-purple-500/30 p-4 rounded-lg mb-8 text-center">
+                <p class="text-purple-400 text-[10px] font-black uppercase tracking-widest">
+                    📺 Streams load automatically. Unmute to hear the engines!
+                </p>
+            </div>
+
+            <div id="twitch-grid" class="stream-grid"></div>
+
+            <p class="text-zinc-600 text-center text-[10px] mt-10 font-bold uppercase tracking-widest">* Stream rendering optimized for recoiledits.github.io</p>
         </section>
 
-        <section id="full-schedule" class="py-16 px-10 max-w-5xl mx-auto border-t border-zinc-900">
-            <h2 class="font-impact text-6xl italic text-white mb-10 text-center">SEASON <span class="text-blue-500">SCHEDULE</span></h2>
-            </section>
-
-        <section id="rules" class="py-16 px-10 max-w-7xl mx-auto border-t border-zinc-900">
-             </section>
-
-    </main>
+        </main>
 
     <script>
         // COUNTDOWN LOGIC
@@ -201,45 +208,45 @@
             output.appendChild(container);
         }
 
-        // --- NEW PERFORMANCE-FIRST TWITCH LOGIC ---
-        const streamers = ['RecoilEdits', 'kyalami_rs3', 'sterfrie15', 'tyrantslayerstudiosct', 'pumpkinswag', 'kilohq', 'thedczac'];
+        // DYNAMIC TWITCH STREAMER LOGIC - FIXED FOR INSTANT LOADING
+        const streamers = [
+            'RecoilEdits', 
+            'kyalami_rs3', 
+            'sterfrie15', 
+            'tyrantslayerstudiosct', 
+            'pumpkinswag', 
+            'kilohq', 
+            'thedczac'
+        ];
+
         const twitchGrid = document.getElementById('twitch-grid');
 
         streamers.forEach(channel => {
             const card = document.createElement('div');
-            card.className = 'stream-card cursor-pointer group';
+            card.className = 'stream-card';
             
-            // Label stays visible always
             const label = document.createElement('div');
             label.className = 'streamer-label';
             label.innerText = channel;
 
-            // Preview Overlay (Zero FPS Drain)
-            const preview = document.createElement('div');
-            preview.className = 'absolute inset-0 bg-zinc-900 flex flex-col items-center justify-center z-30 transition group-hover:bg-zinc-800';
-            preview.innerHTML = `
-                <div class="text-purple-500 text-4xl mb-2 group-hover:scale-110 transition"><i class="fas fa-play-circle"></i></div>
-                <div class="text-white font-black text-xs tracking-widest uppercase">INITIALIZE STREAM</div>
-            `;
+            const iframe = document.createElement('iframe');
+            
+            // Constructing URL for Instant Previews
+            const streamUrl = new URL("https://player.twitch.tv/");
+            streamUrl.searchParams.set("channel", channel);
+            streamUrl.searchParams.set("parent", "recoiledits.github.io");
+            // Set autoplay to true and muted to true to bypass "Initialize Stream" overlay
+            streamUrl.searchParams.set("autoplay", "true"); 
+            streamUrl.searchParams.set("muted", "true");
 
-            const iframeContainer = document.createElement('div');
-            iframeContainer.className = 'w-full h-full';
-
+            iframe.src = streamUrl.toString();
+            iframe.allowFullscreen = true;
+            // Explicitly allow autoplay for modern browsers
+            iframe.setAttribute("allow", "autoplay; fullscreen");
+            
             card.appendChild(label);
-            card.appendChild(preview);
-            card.appendChild(iframeContainer);
+            card.appendChild(iframe);
             twitchGrid.appendChild(card);
-
-            // Load iframe only on click to prevent 1 FPS lag
-            card.addEventListener('click', () => {
-                preview.style.display = 'none';
-                const iframe = document.createElement('iframe');
-                // Added cache buster v=timestamp
-                iframe.src = `https://player.twitch.tv/?channel=${channel}&parent=recoiledits.github.io&parent=localhost&autoplay=true&muted=false&v=${new Date().getTime()}`;
-                iframe.className = "w-full h-full border-none";
-                iframe.allowFullscreen = true;
-                iframeContainer.appendChild(iframe);
-            }, { once: true });
         });
     </script>
 </body>
