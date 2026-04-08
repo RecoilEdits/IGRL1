@@ -508,14 +508,78 @@
             output.appendChild(container);
         }
 
-        const streamers = ['RecoilEdits', 'kyalami_rs3', 'sterfrie15', 'tyrantslayerstudiosct', 'pumpkinswag', 'kilohq', 'thedczac'];
+const streamers = ['RecoilEdits', 'kyalami_rs3', 'sterfrie15', 'tyrantslayerstudiosct', 'pumpkinswag', 'kilohq', 'thedczac'];
         const twitchGrid = document.getElementById('twitch-grid');
+
+        let draggedItem = null;
+
         streamers.forEach(channel => {
-            const card = document.createElement('div'); card.className = 'stream-card';
-            const label = document.createElement('div'); label.className = 'streamer-label'; label.innerText = channel;
+            const card = document.createElement('div'); 
+            // Added 'relative' to position the drag handle
+            card.className = 'stream-card relative'; 
+            card.draggable = true;
+
+            const label = document.createElement('div'); 
+            label.className = 'streamer-label'; 
+            label.innerText = channel;
+
+            // Create a drag handle using your existing Tailwind and FontAwesome assets
+            const dragHandle = document.createElement('div');
+            dragHandle.className = 'absolute top-2 left-2 z-10 bg-[#050505]/90 text-zinc-400 p-2 rounded cursor-move hover:text-[#a970ff] hover:bg-black transition flex items-center gap-2 border border-zinc-800 shadow-lg';
+            dragHandle.innerHTML = '<i class="fas fa-grip-vertical"></i> <span class="text-[10px] font-black uppercase tracking-widest">Move</span>';
+
             const iframe = document.createElement('iframe');
             iframe.src = `https://player.twitch.tv/?channel=${channel}&parent=recoiledits.github.io&autoplay=false&muted=true`;
-            iframe.allowFullscreen = true; card.appendChild(iframe); twitchGrid.appendChild(card);
+            iframe.allowFullscreen = true; 
+            
+            // Append the handle and iframe to the card
+            card.appendChild(dragHandle);
+            card.appendChild(iframe); 
+            twitchGrid.appendChild(card);
+
+            // --- Drag & Drop Event Listeners ---
+
+            card.addEventListener('dragstart', function(e) {
+                draggedItem = this;
+                setTimeout(() => this.style.opacity = '0.4', 0);
+                // Disable iframe pointer events during drag so the mouse doesn't get "stuck" in the Twitch player
+                document.querySelectorAll('.stream-card iframe').forEach(f => f.style.pointerEvents = 'none');
+            });
+
+            card.addEventListener('dragend', function() {
+                setTimeout(() => this.style.opacity = '1', 0);
+                draggedItem = null;
+                // Re-enable iframe pointer events
+                document.querySelectorAll('.stream-card iframe').forEach(f => f.style.pointerEvents = 'auto');
+                document.querySelectorAll('.stream-card').forEach(c => c.style.borderColor = '');
+            });
+
+            card.addEventListener('dragover', function(e) {
+                e.preventDefault(); // Necessary to allow dropping
+                this.style.borderColor = '#a970ff'; // Highlight target with Twitch purple
+            });
+
+            card.addEventListener('dragleave', function() {
+                this.style.borderColor = ''; // Remove highlight when dragging away
+            });
+
+            card.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '';
+                
+                // Swap the DOM elements if dropping on a different card
+                if (this !== draggedItem) {
+                    let allCards = [...twitchGrid.querySelectorAll('.stream-card')];
+                    let draggedIndex = allCards.indexOf(draggedItem);
+                    let droppedIndex = allCards.indexOf(this);
+                    
+                    if (draggedIndex < droppedIndex) {
+                        this.parentNode.insertBefore(draggedItem, this.nextSibling);
+                    } else {
+                        this.parentNode.insertBefore(draggedItem, this);
+                    }
+                }
+            });
         });
     </script>
 </body>
