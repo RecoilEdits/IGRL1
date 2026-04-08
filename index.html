@@ -90,9 +90,14 @@
                          </p>
                     </div>
                 </div>
-                <div class="xl:w-1/2 w-full glass rounded-2xl p-4 shadow-2xl border border-zinc-800">
-                    <div class="w-full h-[500px] rounded-xl overflow-hidden">
-                        <widgetbot server="1482074004318589082" channel="1482074005535064162" width="100%" height="100%"></widgetbot>
+                <div class="xl:w-1/2 w-full glass rounded-2xl p-1 shadow-2xl border border-zinc-800">
+                    <div class="w-full h-[500px] rounded-xl overflow-hidden bg-black">
+                        <widgetbot 
+                            server="1216503522137116812" 
+                            channel="1216503523450060935" 
+                            width="100%" 
+                            height="500">
+                        </widgetbot>
                     </div>
                 </div>
             </div>
@@ -334,13 +339,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="mt-16 flex flex-wrap justify-center gap-10 border-y border-zinc-900 py-10 bg-white/[0.02]">
-                <div class="flex items-center gap-3 text-xs font-black text-zinc-500 italic tracking-[0.2em]"><i class="fas fa-checkered-flag text-blue-500"></i> CLEAN RACING</div>
-                <div class="flex items-center gap-3 text-xs font-black text-zinc-500 italic tracking-[0.2em]"><i class="fas fa-checkered-flag text-blue-500"></i> COMPETITIVE DRIVERS</div>
-                <div class="flex items-center gap-3 text-xs font-black text-zinc-500 italic tracking-[0.2em]"><i class="fas fa-checkered-flag text-blue-500"></i> STRATEGIC RACING</div>
-                <div class="flex items-center gap-3 text-xs font-black text-zinc-500 italic tracking-[0.2em]"><i class="fas fa-checkered-flag text-blue-500"></i> RESPECTFUL COMPETITION</div>
-            </div>
         </section>
 
         <section id="paint-schemes" class="py-16 px-10 max-w-7xl mx-auto border-t border-zinc-900">
@@ -374,7 +372,6 @@
                         <h4 class="text-white font-bold text-sm uppercase tracking-wider truncate">2007 Kyle Busch #5 Kellogg's</h4>
                     </div>
                 </div>
-
                 <div class="glass rounded-xl overflow-hidden border border-zinc-800 hover:border-blue-500 transition-colors">
                     <div class="aspect-video relative">
                         <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/JVa2UP-kC0c" title="NASCAR 25 Paint Booth - 2024 Dale Earnhardt Jr #8" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -501,7 +498,6 @@
         const twitchGrid = document.getElementById('twitch-grid');
         streamers.forEach(channel => {
             const card = document.createElement('div'); card.className = 'stream-card';
-            const label = document.createElement('div'); label.className = 'streamer-label'; label.innerText = channel;
             const iframe = document.createElement('iframe');
             iframe.src = `https://player.twitch.tv/?channel=${channel}&parent=recoiledits.github.io&autoplay=false&muted=true`;
             iframe.allowFullscreen = true; card.appendChild(iframe); twitchGrid.appendChild(card);
