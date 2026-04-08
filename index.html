@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Barlow+Condensed:ital,wght@0,700;1,900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3" async defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@widgetbot/html-embed"></script>
     
     <style>
         :root { --ig-blue: #0084ff; --ig-red: #ff0040; --ig-bg: #050505; --ig-twitch: #a970ff; }
@@ -27,13 +27,14 @@
         .stream-card:hover { transform: translateY(-5px); border-color: var(--ig-twitch); box-shadow: 0 10px 30px rgba(169, 112, 255, 0.2); }
         .stream-card iframe { width: 100%; height: 100%; border: none; }
         
+        .rule-card { background: #0a0a0a; border: 1px solid #1a1a1a; padding: 24px; border-radius: 12px; transition: 0.3s; }
+        .rule-card:hover { border-color: var(--ig-blue); background: #0d0d0d; }
+        .rule-list li { font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; color: #a1a1aa; display: flex; align-items: flex-start; gap: 8px; }
+        .rule-list li i { margin-top: 3px; font-size: 8px; color: var(--ig-blue); }
+
         .header-timer-box { border-left: 2px solid rgba(255,255,255,0.1); padding-left: 20px; min-width: 240px; }
         .header-timer-box.xfinity { border-left-color: var(--ig-blue); }
         .header-timer-box.cup { border-left-color: var(--ig-red); }
-
-        /* Video Container Styling */
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .loader { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--ig-blue); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; display: inline-block; }
@@ -50,6 +51,8 @@
             <a href="#home" class="sidebar-item active-tab"><i class="fas fa-desktop w-5"></i> Dashboard</a>
             <a href="#live-data" class="sidebar-item"><i class="fas fa-terminal w-5"></i> Data Terminal</a>
             <a href="#schedule" class="sidebar-item"><i class="fas fa-calendar-alt w-5"></i> Schedule</a>
+            <a href="#rules" class="sidebar-item"><i class="fas fa-gavel w-5"></i> IGRCC Rules</a>
+            <a href="#paint-schemes" class="sidebar-item"><i class="fas fa-palette w-5"></i> Paint Schemes</a>
             <a href="#streamers" class="sidebar-item"><i class="fas fa-video w-5"></i> Streamers</a>
             <div class="pt-8 px-2 text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-4">Official Links</div>
             <a href="https://discord.gg/nnCB8AkaJu" target="_blank" class="sidebar-item text-indigo-400"><i class="fab fa-discord w-5"></i> Discord</a>
@@ -57,6 +60,7 @@
     </aside>
 
     <main class="flex-1 overflow-y-auto">
+        
         <div class="sticky top-0 z-40 glass border-b border-zinc-800 p-6 flex flex-wrap justify-end items-center gap-12 pr-12">
             <div class="header-timer-box xfinity">
                 <div class="flex items-center gap-3">
@@ -80,16 +84,20 @@
                     <h1 class="font-impact text-7xl md:text-9xl italic leading-none mb-4">EARN THE <span class="text-blue-500">WIN.</span></h1>
                     <p class="text-zinc-400 max-w-lg font-bold uppercase tracking-widest text-xs mb-8">Iron Grip Racing League // PC NASCAR Series</p>
                     <div class="glass p-6 rounded-lg border-l-4 border-blue-500">
-                         <h4 class="font-impact text-2xl mb-2 italic">FEATURED PAINT SCHEMES</h4>
-                         <p class="text-zinc-500 text-[10px] mb-4 uppercase font-black">Powered by KickSave Dave</p>
-                         <div id="discord-widget-container" class="w-full h-[200px] rounded-lg overflow-hidden border border-zinc-800 bg-black/50">
-                             <iframe src="https://discord.com/widget?id=1482074004318589082&theme=dark" width="100%" height="100%" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
-                         </div>
+                         <h4 class="font-impact text-2xl mb-2 italic">LEAGUE PHILOSOPHY</h4>
+                         <p class="text-zinc-400 text-[10px] leading-relaxed uppercase tracking-widest font-black">
+                            Clean Racing • Competitive Drivers • Strategic Racing • Respectful Competition
+                         </p>
                     </div>
                 </div>
-                <div class="xl:w-1/2 w-full glass rounded-2xl p-4 shadow-2xl border border-zinc-800">
-                    <div id="random-video-box" class="video-container">
-                        <iframe id="featured-video" src="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div class="xl:w-1/2 w-full glass rounded-2xl p-1 shadow-2xl border border-zinc-800">
+                    <div class="w-full h-[500px] rounded-xl overflow-hidden bg-black">
+                        <widgetbot 
+                            server="1482074004318589082" 
+                            channel="1482074004318589082" 
+                            width="100%" 
+                            height="500">
+                        </widgetbot>
                     </div>
                 </div>
             </div>
@@ -102,6 +110,7 @@
                 <button onclick="syncData('xfinity_standings')" class="px-4 py-3 bg-blue-600 hover:bg-blue-500 text-[10px] font-black rounded uppercase transition">Xfinity Points</button>
                 <button onclick="syncData('roster')" class="px-4 py-3 bg-zinc-100 text-black hover:bg-white text-[10px] font-black rounded uppercase transition">Roster</button>
                 <button onclick="syncData('cup_ratings')" class="px-4 py-3 bg-zinc-800 hover:bg-zinc-700 text-[10px] font-black rounded uppercase transition text-red-500">Cup Ratings</button>
+                <button onclick="syncData('xfinity_ratings')" class="px-4 py-3 bg-zinc-800 hover:bg-zinc-700 text-[10px] font-black rounded uppercase transition text-blue-500">Xfinity Ratings</button>
                 <button onclick="syncData('setups')" class="px-4 py-3 bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-black rounded uppercase transition">Setup Guide</button>
             </div>
             <div id="data-status" class="hidden flex flex-col items-center justify-center p-20 glass rounded-2xl"><div class="loader mb-4"></div><p class="text-zinc-500 font-bold uppercase text-[10px] tracking-widest">Accessing Secure Database...</p></div>
@@ -112,43 +121,365 @@
             </div>
         </section>
 
+        <section id="schedule" class="py-16 px-10 max-w-7xl mx-auto border-t border-zinc-900">
+            <h2 class="font-impact text-6xl italic text-white mb-2">SEASON <span class="text-blue-500">SCHEDULE</span></h2>
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-10 mt-10">
+                <div class="glass rounded-2xl overflow-hidden border-t-4 border-blue-600">
+                    <div class="p-6 bg-blue-600/10 flex justify-between items-center">
+                        <h3 class="font-impact text-3xl italic text-white">XFINITY SERIES</h3>
+                        <span class="text-[10px] font-black bg-blue-600 text-white px-3 py-1 rounded">FRIDAYS @ 10PM EST</span>
+                    </div>
+                    <div class="p-2 overflow-x-auto">
+                        <table class="w-full text-left text-[10px] uppercase font-bold tracking-wider">
+                            <tbody class="text-zinc-300" id="xfinity-schedule-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="glass rounded-2xl overflow-hidden border-t-4 border-red-600">
+                    <div class="p-6 bg-red-600/10 flex justify-between items-center">
+                        <h3 class="font-impact text-3xl italic text-white">CUP SERIES</h3>
+                        <span class="text-[10px] font-black bg-red-600 text-white px-3 py-1 rounded">SATURDAYS @ 10PM EST</span>
+                    </div>
+                    <div class="p-2 overflow-x-auto">
+                        <table class="w-full text-left text-[10px] uppercase font-bold tracking-wider">
+                            <tbody class="text-zinc-300" id="cup-schedule-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="rules" class="py-20 px-10 max-w-7xl mx-auto border-t border-zinc-900">
+            <div class="text-center mb-16">
+                <h2 class="font-impact text-7xl italic text-white mb-2">IGRCC <span class="text-blue-500">PROTOCOLS</span></h2>
+                <p class="text-zinc-500 text-xs font-black uppercase tracking-[0.4em] mb-6">Official Rules & Regulations | IronGrip Racing Code of Conduct</p>
+                <div class="glass p-6 rounded-xl border border-zinc-800 max-w-3xl mx-auto">
+                    <p class="text-zinc-300 text-[11px] font-bold uppercase tracking-widest leading-relaxed">
+                        The Iron Grip Racing League (IGRL) is built on clean racing, strategy, and respectful competition. 
+                        All drivers must follow these rules to ensure fair, safe, and competitive racing.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <div class="rule-card">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-10 h-10 rounded bg-blue-600/20 flex items-center justify-center text-blue-500"><i class="fas fa-desktop"></i></div>
+                        <h3 class="font-impact text-xl italic text-white">RACE SETTINGS</h3>
+                    </div>
+                    <ul class="rule-list">
+                        <li><i class="fas fa-cog"></i> Race Length: 50%</li>
+                        <li><i class="fas fa-cog"></i> Tire Wear: 2X</li>
+                        <li><i class="fas fa-cog"></i> Fuel Consumption: 2X</li>
+                        <li><i class="fas fa-cog"></i> Yellow Flags: Relaxed</li>
+                        <li><i class="fas fa-cog"></i> Stages: ON</li>
+                        <li><i class="fas fa-cog"></i> Black Flags: ON</li>
+                        <li><i class="fas fa-cog"></i> Custom Setups: Allowed</li>
+                    </ul>
+                </div>
+
+                <div class="rule-card border-t-2 border-zinc-700">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-10 h-10 rounded bg-zinc-800 flex items-center justify-center text-white"><i class="fas fa-hashtag"></i></div>
+                        <h3 class="font-impact text-xl italic text-white">CAR & TEAM SYSTEM</h3>
+                    </div>
+                    <div class="space-y-4 text-[10px] font-bold uppercase tracking-wider">
+                        <p class="text-zinc-400">Drivers claim an active NASCAR number from Cup, Xfinity, Truck, or ARCA. Manufacturer must match the real-life team.</p>
+                        <div class="bg-black/40 p-3 rounded border border-zinc-800 space-y-2">
+                            <div class="flex justify-between"><span class="text-zinc-500">Hendrick Motorsports</span> <span class="text-blue-400">Chevrolet</span></div>
+                            <div class="flex justify-between"><span class="text-zinc-500">Team Penske</span> <span class="text-white">Ford</span></div>
+                            <div class="flex justify-between"><span class="text-zinc-500">Joe Gibbs Racing</span> <span class="text-red-500">Toyota</span></div>
+                        </div>
+                        <div class="text-zinc-500 space-y-1 pt-2 border-t border-zinc-800">
+                            <p>• Number must match claimed car</p>
+                            <p>• Manufacturer must match team</p>
+                            <p>• Custom designs allowed (realism optional)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rule-card border-l-4 border-l-red-600">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-10 h-10 rounded bg-red-600/20 flex items-center justify-center text-red-500"><i class="fas fa-car"></i></div>
+                        <h3 class="font-impact text-xl italic text-white text-red-500">DRIVING STANDARDS</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-green-500 text-[9px] font-black mb-2 tracking-widest uppercase">Must Do:</p>
+                            <ul class="rule-list">
+                                <li><i class="fas fa-check"></i> Predictable racing line</li>
+                                <li><i class="fas fa-check"></i> Avoid aggressive divebombs</li>
+                                <li><i class="fas fa-check"></i> Avoid reactive blocking</li>
+                                <li><i class="fas fa-check"></i> Stay aware of surrounding cars</li>
+                                <li><i class="fas fa-check"></i> Respect other drivers' space</li>
+                            </ul>
+                        </div>
+                        <div class="pt-2 border-t border-zinc-800">
+                            <p class="text-red-500 text-[9px] font-black mb-2 tracking-widest uppercase">Not Allowed:</p>
+                            <ul class="rule-list opacity-80">
+                                <li><i class="fas fa-ban"></i> Intentional wrecking / Retaliation</li>
+                                <li><i class="fas fa-ban"></i> Brake checking</li>
+                                <li><i class="fas fa-ban"></i> Multi-lane blocking</li>
+                                <li><i class="fas fa-ban"></i> Unsafe contact with lap cars</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-10 h-10 rounded bg-zinc-800 flex items-center justify-center text-zinc-400"><i class="fas fa-angle-double-right"></i></div>
+                        <h3 class="font-impact text-xl italic text-white">LAP CAR RULES</h3>
+                    </div>
+                    <ul class="rule-list">
+                        <li><i class="fas fa-circle"></i> Yield to faster cars and leaders</li>
+                        <li><i class="fas fa-circle"></i> Do not block leaders or winners</li>
+                        <li><i class="fas fa-circle"></i> Maintain predictable lines</li>
+                        <li><i class="fas fa-circle"></i> No sudden moves in front of lead cars</li>
+                        <li><i class="fas fa-circle"></i> Courteous behavior is expected</li>
+                    </ul>
+                </div>
+
+                <div class="rule-card">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-10 h-10 rounded bg-green-600/20 flex items-center justify-center text-green-500"><i class="fas fa-flag"></i></div>
+                        <h3 class="font-impact text-xl italic text-white">PROCEDURES</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <ul class="rule-list">
+                            <li class="text-white">Starts & Restarts:</li>
+                            <li><i class="fas fa-caret-right"></i> No passing before start/finish line</li>
+                            <li><i class="fas fa-caret-right"></i> Lane discipline on initial start</li>
+                            <li><i class="fas fa-caret-right"></i> No lane jumping T1/T2 on Lap 1</li>
+                        </ul>
+                        <ul class="rule-list pt-2 border-t border-zinc-800">
+                            <li class="text-white">Pit Road:</li>
+                            <li><i class="fas fa-caret-right"></i> Observe pit speed limits</li>
+                            <li><i class="fas fa-caret-right"></i> Enter and exit safely</li>
+                            <li><i class="fas fa-caret-right"></i> Blend properly into traffic</li>
+                            <li class="text-zinc-500 italic">Unsafe pit behavior = Penalties</li>
+                            <li class="text-zinc-500 italic">Black flags are enforced</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-10 h-10 rounded bg-yellow-600/20 flex items-center justify-center text-yellow-500"><i class="fas fa-exclamation-triangle"></i></div>
+                        <h3 class="font-impact text-xl italic text-white">INCIDENTS</h3>
+                    </div>
+                    <ul class="rule-list">
+                        <li><i class="fas fa-circle"></i> Intentional cautions prohibited</li>
+                        <li><i class="fas fa-circle"></i> Avoid unnecessary contact</li>
+                        <li><i class="fas fa-circle"></i> Maintain vehicle control</li>
+                        <li><i class="fas fa-circle"></i> Admins review all incidents</li>
+                        <li><i class="fas fa-circle"></i> Not all contact results in penalty</li>
+                        <li class="text-zinc-500 italic border-t border-zinc-800 pt-2 mt-2">Drivers are responsible for situational awareness</li>
+                    </ul>
+                </div>
+
+                <div class="rule-card">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-10 h-10 rounded bg-purple-600/20 flex items-center justify-center text-purple-500"><i class="fas fa-microphone"></i></div>
+                        <h3 class="font-impact text-xl italic text-white">COMMUNICATION</h3>
+                    </div>
+                    <ul class="rule-list">
+                        <li><i class="fas fa-comment"></i> No yelling, arguing, or toxic behavior</li>
+                        <li><i class="fas fa-comment"></i> Voice chat must remain race-focused</li>
+                        <li class="text-white"><i class="fas fa-comment"></i> STAY IN MAIN VC UNTIL QUALY ENDS</li>
+                        <li class="text-zinc-500">• May move to separate channels for race</li>
+                        <li class="text-red-500 mt-2 border-t border-zinc-800 pt-2"><i class="fas fa-ban"></i> Harassment / Distraction = BAN</li>
+                    </ul>
+                </div>
+
+                <div class="rule-card">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-10 h-10 rounded bg-yellow-500/10 flex items-center justify-center text-yellow-500"><i class="fas fa-trophy"></i></div>
+                        <h3 class="font-impact text-xl italic text-white">CHAMPIONSHIP</h3>
+                    </div>
+                    <ul class="rule-list">
+                        <li><i class="fas fa-star"></i> Traditional season points system</li>
+                        <li><i class="fas fa-star"></i> Most points at end wins title</li>
+                        <li><i class="fas fa-star text-red-500"></i> NO PLAYOFF FORMAT</li>
+                        <li><i class="fas fa-star"></i> Consistency is rewarded</li>
+                        <li><i class="fas fa-star"></i> Clean racing is rewarded</li>
+                    </ul>
+                </div>
+
+                <div class="rule-card">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-10 h-10 rounded bg-blue-500/10 flex items-center justify-center text-blue-500"><i class="fas fa-info-circle"></i></div>
+                        <h3 class="font-impact text-xl italic text-white">ADMIN NOTES</h3>
+                    </div>
+                    <ul class="rule-list">
+                        <li><i class="fas fa-shield-alt"></i> Admin authority is final</li>
+                        <li><i class="fas fa-shield-alt"></i> No cheating or exploits</li>
+                        <li><i class="fas fa-shield-alt"></i> No unsportsmanlike behavior</li>
+                        <li><i class="fas fa-shield-alt"></i> Rules subject to update</li>
+                        <li class="text-zinc-500 italic">Drivers will be notified of changes</li>
+                    </ul>
+                </div>
+
+                <div class="lg:col-span-3 glass p-8 rounded-2xl border border-zinc-800 mt-6">
+                    <div class="flex flex-col xl:flex-row gap-12 items-center">
+                        <div class="xl:w-1/3 text-center xl:text-left">
+                            <h4 class="font-impact text-4xl italic text-red-500 mb-2"><i class="fas fa-gavel mr-3"></i>PENALTY SCALE</h4>
+                            <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest leading-loose">
+                                Egregious or repeated violations may result in permanent league bans.
+                            </p>
+                        </div>
+                        <div class="xl:w-2/3 flex flex-wrap justify-center gap-3">
+                            <span class="px-4 py-2 bg-zinc-900 text-zinc-400 border border-zinc-800 text-[10px] font-black uppercase rounded">Pass-Through Penalty</span>
+                            <span class="px-4 py-2 bg-zinc-900 text-zinc-400 border border-zinc-800 text-[10px] font-black uppercase rounded">Position Loss</span>
+                            <span class="px-4 py-2 bg-zinc-900 text-zinc-400 border border-zinc-800 text-[10px] font-black uppercase rounded">Points Deduction</span>
+                            <span class="px-4 py-2 bg-red-900/20 text-red-500 border border-red-500/30 text-[10px] font-black uppercase rounded">Race Suspension</span>
+                            <span class="px-4 py-2 bg-red-600 text-white text-[10px] font-black uppercase rounded shadow-lg shadow-red-600/20">League Removal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="paint-schemes" class="py-16 px-10 max-w-7xl mx-auto border-t border-zinc-900">
+            <h2 class="font-impact text-6xl italic text-white mb-2 text-center">PAINT <span class="text-blue-500">SCHEMES</span></h2>
+            <p class="text-zinc-500 text-xs font-black text-center uppercase tracking-[0.4em] mb-12">Official Design Guides by KickSave_Dave</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="glass rounded-xl overflow-hidden border border-zinc-800 hover:border-blue-500 transition-colors">
+                    <div class="aspect-video relative">
+                        <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/Lo_5v_8QV9U" title="NASCAR 25 Paint Booth - 2024 Kyle Larson #5 Throwback" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-4 bg-[#0a0a0a]">
+                        <h4 class="text-white font-bold text-sm uppercase tracking-wider truncate">2024 Kyle Larson #5 Throwback</h4>
+                    </div>
+                </div>
+
+                <div class="glass rounded-xl overflow-hidden border border-zinc-800 hover:border-blue-500 transition-colors">
+                    <div class="aspect-video relative">
+                        <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/FyR6umYEgVo" title="NASCAR 25 Paint Booth - 1992 Darrell Waltrip #17 Western Auto" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-4 bg-[#0a0a0a]">
+                        <h4 class="text-white font-bold text-sm uppercase tracking-wider truncate">1992 Darrell Waltrip #17</h4>
+                    </div>
+                </div>
+
+                <div class="glass rounded-xl overflow-hidden border border-zinc-800 hover:border-blue-500 transition-colors">
+                    <div class="aspect-video relative">
+                        <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/9y0OFp8o7lg" title="NASCAR 25 Paint Booth - 2007 Kyle Busch #5 Kellogg's" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-4 bg-[#0a0a0a]">
+                        <h4 class="text-white font-bold text-sm uppercase tracking-wider truncate">2007 Kyle Busch #5 Kellogg's</h4>
+                    </div>
+                </div>
+                <div class="glass rounded-xl overflow-hidden border border-zinc-800 hover:border-blue-500 transition-colors">
+                    <div class="aspect-video relative">
+                        <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/JVa2UP-kC0c" title="NASCAR 25 Paint Booth - 2024 Dale Earnhardt Jr #8" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-4 bg-[#0a0a0a]">
+                        <h4 class="text-white font-bold text-sm uppercase tracking-wider truncate">2024 Dale Jr #8 Bud Late Model</h4>
+                    </div>
+                </div>
+
+                <div class="glass rounded-xl overflow-hidden border border-zinc-800 hover:border-blue-500 transition-colors">
+                    <div class="aspect-video relative">
+                        <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/rBnnPMS1FUQ" title="NASCAR 25 Paint Booth - 2018 Jimmie Johnson #48" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-4 bg-[#0a0a0a]">
+                        <h4 class="text-white font-bold text-sm uppercase tracking-wider truncate">2018 Jimmie Johnson #48</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center">
+                <a href="https://www.youtube.com/@KickSave_Dave" target="_blank" class="inline-block px-8 py-4 bg-red-600 hover:bg-red-500 text-white text-[11px] font-black rounded uppercase transition shadow-lg shadow-red-600/20">
+                    <i class="fab fa-youtube mr-2"></i> Subscribe & View All Schemes
+                </a>
+            </div>
+        </section>
+
+        <section id="streamers" class="py-16 px-10 max-w-7xl mx-auto border-t border-zinc-900">
+            <h2 class="font-impact text-6xl italic text-white mb-2 text-center">IGRL <span class="text-purple-500">STREAMERS</span></h2>
+            <div id="twitch-grid" class="stream-grid mt-10"></div>
+        </section>
+
     </main>
 
     <script>
-        // 1. RANDOM VIDEO LOGIC
-        // Add more YouTube Video IDs from KickSave Dave's channel here
-        const KICKSAVE_VIDEOS = [
-            'qL7i-nndh-0', // Paint Scheme Showcase 1
-            '6wzXN3_4vX0', // Paint Scheme Showcase 2
-            'PscE-8nS02A', // Paint Scheme Showcase 3
-            'GzI1V8vR6yA', // Paint Scheme Showcase 4
-            'Y6f1X7_4KkM'  // Paint Scheme Showcase 5
+        const XFINITY_DATES = [
+            { name: "Daytona", date: "April 03, 2026 22:00:00 EST" },
+            { name: "Las Vegas", date: "April 10, 2026 22:00:00 EST" },
+            { name: "OFF WEEK", date: "OFF" },
+            { name: "Portland", date: "April 24, 2026 22:00:00 EST" },
+            { name: "Dover", date: "May 01, 2026 22:00:00 EST" },
+            { name: "Kansas", date: "May 08, 2026 22:00:00 EST" },
+            { name: "Iowa", date: "May 15, 2026 22:00:00 EST" },
+            { name: "Charlotte", date: "May 22, 2026 22:00:00 EST" },
+            { name: "Rockingham", date: "May 29, 2026 22:00:00 EST" },
+            { name: "Texas", date: "June 05, 2026 22:00:00 EST" },
+            { name: "Indianapolis", date: "June 12, 2026 22:00:00 EST" },
+            { name: "Watkins Glen", date: "June 19, 2026 22:00:00 EST" },
+            { name: "Homestead", date: "June 26, 2026 22:00:00 EST" },
+            { name: "OFF WEEK", date: "OFF" },
+            { name: "Talladega", date: "July 10, 2026 22:00:00 EST" },
+            { name: "Phoenix", date: "July 17, 2026 22:00:00 EST" }
         ];
 
-        function setRandomVideo() {
-            const videoId = KICKSAVE_VIDEOS[Math.floor(Math.random() * KICKSAVE_VIDEOS.length)];
-            document.getElementById('featured-video').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0`;
-        }
+        const CUP_DATES = [
+            { name: "Daytona", date: "April 04, 2026 22:00:00 EST" },
+            { name: "Las Vegas", date: "April 11, 2026 22:00:00 EST" },
+            { name: "OFF WEEK", date: "OFF" },
+            { name: "Sonoma", date: "April 25, 2026 22:00:00 EST" },
+            { name: "Dover", date: "May 02, 2026 22:00:00 EST" },
+            { name: "Kansas", date: "May 09, 2026 22:00:00 EST" },
+            { name: "North Wilkesboro", date: "May 16, 2026 22:00:00 EST" },
+            { name: "Charlotte", date: "May 23, 2026 22:00:00 EST" },
+            { name: "WWT Raceway", date: "May 30, 2026 22:00:00 EST" },
+            { name: "Michigan", date: "June 06, 2026 22:00:00 EST" },
+            { name: "Indianapolis", date: "June 13, 2026 22:00:00 EST" },
+            { name: "Watkins Glen", date: "June 20, 2026 22:00:00 EST" },
+            { name: "Homestead", date: "June 27, 2026 22:00:00 EST" },
+            { name: "OFF WEEK", date: "OFF" },
+            { name: "Talladega", date: "July 11, 2026 22:00:00 EST" },
+            { name: "Phoenix", date: "July 18, 2026 22:00:00 EST" }
+        ];
 
-        // Initialize video on load
-        window.addEventListener('load', setRandomVideo);
-
-        // 2. DISCORD CRATE (Optional Floating Chat Fix)
-        // This adds a clean "chat" button in the bottom right corner
-        // Remove if you only want the embedded version
-        window.addEventListener('load', () => {
-            new Crate({
-                server: '1482074004318589082', 
-                channel: '1482074005535064162'
+        function populateSchedule(data, elementId) {
+            const body = document.getElementById(elementId);
+            const now = new Date().getTime();
+            data.forEach(race => {
+                const isOff = race.date === "OFF";
+                const raceTime = isOff ? 0 : new Date(race.date).getTime();
+                let status = "SCHEDULED", color = "text-zinc-500";
+                if (isOff) { status = "--"; color = "text-zinc-700"; }
+                else if (raceTime < now) { status = "COMPLETED"; color = "text-green-500"; }
+                body.innerHTML += `<tr class="border-b border-zinc-800/50 hover:bg-white/5 transition"><td class="p-3 text-zinc-500">${isOff ? "BYE" : race.date.split(',')[0]}</td><td class="p-3 ${isOff ? 'italic text-zinc-600' : ''}">${race.name}</td><td class="p-3 text-right ${color}">${status}</td></tr>`;
             });
-        });
+        }
+        populateSchedule(XFINITY_DATES, 'xfinity-schedule-body');
+        populateSchedule(CUP_DATES, 'cup-schedule-body');
 
-        // 3. YOUR EXISTING DATA SYNC LOGIC
+        function updateCountdowns() {
+            const now = new Date().getTime();
+            function process(seriesData, timerId, trackId) {
+                const nextRace = seriesData.find(r => r.date !== "OFF" && new Date(r.date).getTime() > now);
+                if (!nextRace) { document.getElementById(timerId).innerText = "FINALE"; return; }
+                const diff = new Date(nextRace.date).getTime() - now;
+                const d = Math.floor(diff / 86400000), h = Math.floor((diff % 86400000) / 3600000), m = Math.floor((diff % 3600000) / 60000), s = Math.floor((diff % 60000) / 1000);
+                document.getElementById(trackId).innerText = nextRace.name;
+                document.getElementById(timerId).innerText = `${d}D : ${h}H : ${m}M : ${s}S`;
+            }
+            process(XFINITY_DATES, 'xfinity-timer', 'xfinity-track');
+            process(CUP_DATES, 'cup-timer', 'cup-track');
+        }
+        setInterval(updateCountdowns, 1000); updateCountdowns();
+
         const DATA_LINKS = {
             cup_standings: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRaElymkI-WS9GjMW-A-F2rFB5yx6dnxBzn2wp7zhOC-sT8HE5bYJ-7p3wG6bgEXc3RAgPtbhA_7vr4/pubhtml?widget=true&headers=false",
             xfinity_standings: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRPIqR_e5XKwFdlUSvcSSUyVgfdp3OWjLZgkYZi7lptGstgQnlmglCRW4wwdGXQlQAmlvBCEzk9MSq8/pubhtml?widget=true&headers=false",
             roster: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSXEurKQD7_295whkYC5zgWEQXc6ghV9-H3WAVTtMHWDN-dTBYU9sLwTrf4ZWXUIR5bfmiIt84PqtUn/pubhtml?widget=true&headers=false",
             cup_ratings: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTa6EUPjd0V8B5Zj7z6wrSMfZnEHKF0FvdnXSREJaWXcAFKmaRF-X9yA-0a-D7S00XT6aGjZezKhXHb/pubhtml?widget=true&headers=false",
+            xfinity_ratings: "https://docs.google.com/spreadsheets/d/e/2PACX-1vTbJuxXq-KQErTDJ26ig8Bamih1Zc2qzWHUhzcs2wWCV8CQgGkdBZjwCC90mckOyJbNh3RQrkHfAMIp/pubhtml?widget=true&headers=false",
             setups: "https://docs.google.com/presentation/d/e/2PACX-1vR-UxAX8Ahq3kDNZ5gqLK-LwvbbwH5ry9l40z-cLQvDlQ4MT2GZDSOvWxgMyHKX2Q/embed"
         };
 
@@ -162,9 +493,15 @@
             container.appendChild(iframe); iframe.onload = () => { status.classList.add('hidden'); };
             output.appendChild(container);
         }
-        
-        // Timer Logic (Keep your existing timer code here)
-        // ... (Insert your CUP_DATES and updateCountdowns functions here)
+
+        const streamers = ['RecoilEdits', 'kyalami_rs3', 'sterfrie15', 'tyrantslayerstudiosct', 'pumpkinswag', 'kilohq', 'thedczac'];
+        const twitchGrid = document.getElementById('twitch-grid');
+        streamers.forEach(channel => {
+            const card = document.createElement('div'); card.className = 'stream-card';
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://player.twitch.tv/?channel=${channel}&parent=recoiledits.github.io&autoplay=false&muted=true`;
+            iframe.allowFullscreen = true; card.appendChild(iframe); twitchGrid.appendChild(card);
+        });
     </script>
 </body>
 </html>
