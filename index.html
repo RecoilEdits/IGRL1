@@ -15,7 +15,6 @@
     <style>
         :root { --ig-blue: #0084ff; --ig-red: #ff0040; --ig-bg: #050505; --ig-twitch: #a970ff; }
         
-        /* FEATURE 5: CUSTOM RACING CURSORS */
         body { 
             background-color: var(--ig-bg); 
             color: #e4e4e7; 
@@ -67,7 +66,16 @@
         .timeline-container { position: relative; width: 100%; height: 24px; background: #111; border-radius: 12px; overflow: hidden; border: 1px solid #222; }
         .timeline-fill { position: absolute; height: 100%; background: linear-gradient(90deg, #0084ff, #10b981); opacity: 0.3; }
         .pit-marker { position: absolute; top: 0; width: 4px; height: 100%; background: #ff0040; box-shadow: 0 0 8px #ff0040; transform: translateX(-50%); z-index: 10; }
-        .pit-label { position: absolute; top: 28px; transform: translateX(-50%); font-size: 9px; font-weight: 900; color: #ff0040; text-transform: uppercase; }
+        .pit-label { position: absolute; top: 28px; transform: translateX(-50%); font-size: 9px; font-weight: 900; color: #ff0040; text-transform: uppercase; white-space: nowrap; }
+        
+        /* NEW FOR PRO: Stage Visualization */
+        .stage-zone-1 { background: rgba(234, 179, 8, 0.1); position: absolute; height: 100%; border-right: 1px dashed rgba(234, 179, 8, 0.4); }
+        .stage-zone-2 { background: rgba(59, 130, 246, 0.1); position: absolute; height: 100%; border-right: 1px dashed rgba(59, 130, 246, 0.4); }
+        .stage-marker { position: absolute; top: 0; width: 2px; height: 100%; background: #eab308; z-index: 5; }
+        .stage-label { position: absolute; top: -14px; transform: translateX(-50%); font-size: 8px; font-weight: 900; color: #eab308; text-transform: uppercase; }
+        
+        @keyframes alert-blink { 50% { opacity: 0.5; } }
+        .alert-blink { animation: alert-blink 1s infinite; }
     </style>
 </head>
 <body class="flex min-h-screen">
@@ -723,27 +731,31 @@
             twitchGrid.appendChild(card);
         });
 
-        // ----------------------------------
-        // ENHANCED STRATEGY LAB LOGIC
-        // ----------------------------------
-        let stageLogicEnabled = false;
 
-        function toggleStage() {
-            stageLogicEnabled = !stageLogicEnabled;
-            const btn = document.getElementById('stage-toggle');
-            const inputs = document.getElementById('stage-inputs');
-            if(stageLogicEnabled) {
-                btn.innerText = "ON"; btn.className = "px-4 py-1.5 bg-yellow-600 text-[9px] font-black rounded uppercase border border-yellow-500 text-white transition-all";
-                inputs.classList.remove('hidden');
-            } else {
-                btn.innerText = "OFF"; btn.className = "px-4 py-1.5 bg-zinc-800 text-[9px] font-black rounded uppercase border border-zinc-700 text-zinc-400 hover:text-white transition-all";
-                inputs.classList.add('hidden');
+
+
+        // // STRATEGY LAB PRO START
+        /**
+         * DETERMINISTIC ENGINE CLASS
+         * Ensures all math is repeatable and mathematically accurate.
+         */
+        class IGRL_SimEngine {
+            static calculateFuelCoefficient(window) {
+                return 1.0 / Math.max(1, window);
             }
-            updateLab();
+
+            static simulateStint(laps, fuelWindow, savePotential) {
+                const maxFuelLaps = fuelWindow + savePotential;
+                const stops = Math.max(0, Math.ceil(laps / maxFuelLaps) - 1);
+                return {
+                    stops: stops,
+                    maxWindow: maxFuelLaps
+                };
+            }
         }
 
         function updateLab() {
-            // Inputs
+            // 1. DATA ACQUISITION
             const laps = parseInt(document.getElementById('sl-laps').value);
             const fuel = parseInt(document.getElementById('sl-fuel').value);
             const save = parseInt(document.getElementById('sl-save').value);
@@ -751,77 +763,82 @@
             const s1Len = parseInt(document.getElementById('sl-s1').value);
             const s2Len = parseInt(document.getElementById('sl-s2').value);
 
-            // Cumulative Math
+            // 2. STAGE CALCULATIONS
             const s1End = s1Len;
             const s2End = s1Len + s2Len;
-            const s3Len = laps - s2End;
+            const s3Len = Math.max(0, laps - s2End);
+            const maxFuel = fuel + save;
 
-            // UI Label Updates
+            // 3. UI LABEL REFRESH
             document.getElementById('val-laps').innerText = `${laps} Laps`;
             document.getElementById('val-fuel').innerText = `${fuel} Laps`;
             document.getElementById('val-save').innerText = `+${save} Laps`;
-            document.getElementById('val-wear').innerText = `${wear}%`;
+            document.getElementById('val-wear').innerText = `${wear.toFixed(1)}%`;
             document.getElementById('val-s1').innerText = `${s1Len} Laps`;
             document.getElementById('val-s2').innerText = `${s2Len} Laps`;
             document.getElementById('s1-summary').innerText = s1End;
             document.getElementById('s2-summary').innerText = s2End;
 
-            // Fuel Logic
-            const pushStops = Math.ceil(laps / fuel) - 1;
-            const pushStintAvg = Math.floor(laps / (pushStops + 1));
-            document.getElementById('push-stops').innerText = pushStops;
-            document.getElementById('push-stint').innerText = `${pushStintAvg} Laps`;
+            // 4. CORE ENGINE SIMULATION (Deterministic)
+            const pushData = IGRL_SimEngine.simulateStint(laps, fuel, 0);
+            const saveData = IGRL_SimEngine.simulateStint(laps, fuel, save);
+            
+            const pushStintAvg = stopsToAvg(laps, pushData.stops);
+            document.getElementById('push-stops').innerText = pushData.stops;
+            document.getElementById('push-stint').innerText = `${pushStintAvg.toFixed(1)} Laps`;
 
-            const maxFuel = fuel + save;
-            const saveStops = Math.ceil(laps / maxFuel) - 1;
-            document.getElementById('save-stops').innerText = saveStops;
-            document.getElementById('save-stint').innerText = `${maxFuel} Laps`;
+            document.getElementById('save-stops').innerText = saveData.stops;
+            document.getElementById('save-stint').innerText = `${saveData.maxWindow} Laps`;
 
-            // Tire Wear Calc
-            const stintWear = (pushStintAvg * wear).toFixed(1);
+            // 5. PRECISION TIRE WEAR
+            const stintWear = (pushStintAvg * wear).toFixed(2);
             document.getElementById('eng-tire').innerText = `-${stintWear}%`;
 
-            // ADVANCED ENGINEER DIRECTIVE
+            // 6. ENGINEER DIRECTIVE LOGIC
             const directive = document.getElementById('eng-directive');
             const subtext = document.getElementById('eng-subtext');
             const alertBg = document.getElementById('eng-bg-alert');
-            
             alertBg.style.opacity = "0";
 
             if (stageLogicEnabled) {
-                // Strategic Intelligence
-                const s1Safe = maxFuel >= s1End;
-                const s2Safe = maxFuel >= s2Len;
-                const flipPotential = (fuel >= (s1End - 3)) && (fuel < s1End);
+                const canReachS1 = maxFuel >= s1End;
+                const deltaS1 = s1End - fuel;
+                const flipPotential = (fuel >= (s1End - 4)) && (fuel < s1End);
 
-                if (!s1Safe) {
-                    directive.innerText = "S1 ALERT: FUEL DEPLETION";
+                if (!canReachS1) {
+                    directive.innerText = "S1 ALERT: FUEL DEFICIT";
                     directive.className = "font-impact text-4xl italic text-red-500 alert-blink";
-                    subtext.innerText = `You are short ${s1End - maxFuel} laps to make the Stage 1 break. A strategic pit stop or EXTREME saving is required.`;
+                    subtext.innerText = `CRITICAL: Even with max saving (+${save} laps), you are ${s1End - maxFuel} laps short of the Stage 1 break. A split-stage strategy is required.`;
                     alertBg.style.opacity = "1";
                 } 
                 else if (flipPotential) {
                     directive.innerText = "STRATEGY: FLIP THE STAGE";
                     directive.className = "font-impact text-4xl italic text-blue-500";
-                    subtext.innerText = `You have enough fuel to pit 2-3 laps BEFORE the stage ends. This gains massive track position for the Stage 2 start.`;
+                    subtext.innerText = `Deterministic check successful: You can pit 2-4 laps before S1 end. Sacrificing S1 points guarantees clean air and lead position for the S2 restart.`;
                 }
-                else if (s1Safe && fuel < s1End) {
-                    directive.innerText = "CAUTION: SAVE FOR POINTS";
+                else if (deltaS1 > 0) {
+                    directive.innerText = "CAUTION: ECONOMY MODE";
                     directive.className = "font-impact text-4xl italic text-yellow-500";
-                    subtext.innerText = `You need +${s1End - fuel} laps of fuel saving to reach the Stage 1 break without pitting. Use the draft.`;
+                    subtext.innerText = `You require ${deltaS1.toFixed(1)} laps of fuel extension to clear Stage 1. Engage lift-and-coast maneuvers in turn entries.`;
                 }
                 else {
-                    directive.innerText = "STATUS: STAGE DOMINANCE";
+                    directive.innerText = "STATUS: FULL ATTACK";
                     directive.className = "font-impact text-4xl italic text-emerald-500";
-                    subtext.innerText = `Fuel load is sufficient for Stage 1. Focus on tire management and track position for the S2 restart.`;
+                    subtext.innerText = `Fuel load is mathematically sufficient for Stage 1. Focus on optimizing corner exit speed to preserve tire life (-${stintWear}%).`;
                 }
             } else {
-                directive.innerText = stintWear > 18 ? "PRIORITY: TIRE MANAGEMENT" : "PRIORITY: PUSH TO MAX";
-                directive.className = stintWear > 18 ? "font-impact text-4xl italic text-orange-500" : "font-impact text-4xl italic text-white";
-                subtext.innerText = "No stage breaks active. Plan stops based purely on fuel window and tire falloff efficiency.";
+                if (parseFloat(stintWear) > 80) {
+                    directive.innerText = "WARNING: TIRE FAILURE RISK";
+                    directive.className = "font-impact text-4xl italic text-red-500";
+                    subtext.innerText = "Tire wear reaches critical degradation levels before fuel exhaustion. Strategy must be dictated by rubber life.";
+                } else {
+                    directive.innerText = "DIRECTIVE: PUSH TO LIMIT";
+                    directive.className = "font-impact text-4xl italic text-white";
+                    subtext.innerText = "Open race configuration. Maximize throttle time. Current fuel window is the primary constraint.";
+                }
             }
 
-            // TIMELINE DRAWING
+            // 7. VISUALIZER RE-RENDER (High Precision Markers)
             const timeline = document.getElementById('race-timeline');
             timeline.innerHTML = '<div class="timeline-fill" style="width: 100%;"></div>';
             
@@ -829,37 +846,39 @@
                 const s1Pct = (s1End / laps) * 100;
                 const s2Pct = (s2End / laps) * 100;
                 
-                // Draw Zones
-                timeline.innerHTML += `<div class="stage-zone stage-zone-1" style="width: ${s1Pct}%; left: 0;"></div>`;
-                timeline.innerHTML += `<div class="stage-zone stage-zone-2" style="width: ${(s2Len/laps)*100}%; left: ${s1Pct}%;"></div>`;
-                timeline.innerHTML += `<div class="stage-zone stage-zone-3" style="width: ${(s3Len/laps)*100}%; left: ${s2Pct}%;"></div>`;
+                timeline.innerHTML += `<div class="stage-zone-1" style="width: ${s1Pct}%; left: 0;"></div>`;
+                timeline.innerHTML += `<div class="stage-zone-2" style="width: ${(s2Len/laps)*100}%; left: ${s1Pct}%;"></div>`;
                 
-                // Draw Markers
                 if (s1Pct < 100) {
-                    timeline.innerHTML += `<div class="stage-marker" style="left: ${s1Pct}%;"></div>
-                                           <div class="stage-label" style="left: ${s1Pct}%;">S1 L${s1End}</div>`;
+                    timeline.innerHTML += `<div class="stage-marker" style="left: ${s1Pct}%;"></div><div class="stage-label" style="left: ${s1Pct}%;">S1 L${s1End}</div>`;
                 }
                 if (s2Pct < 100) {
-                    timeline.innerHTML += `<div class="stage-marker" style="left: ${s2Pct}%;"></div>
-                                           <div class="stage-label" style="left: ${s2Pct}%;">S2 L${s2End}</div>`;
+                    timeline.innerHTML += `<div class="stage-marker" style="left: ${s2Pct}%; background: #3b82f6;"></div><div class="stage-label" style="left: ${s2Pct}%; color: #3b82f6;">S2 L${s2End}</div>`;
                 }
             }
 
-            // Pit Markers
-            const activeStint = saveStops < pushStops ? maxFuel : fuel;
-            const activeStops = saveStops < pushStops ? saveStops : pushStops;
+            const activeStint = saveData.stops < pushData.stops ? maxFuel : fuel;
+            const activeStops = saveData.stops < pushData.stops ? saveData.stops : pushData.stops;
             
             for (let i = 1; i <= activeStops; i++) {
-                const pitLap = activeStint * i;
+                const pitLap = Math.floor(activeStint * i);
                 const posPct = (pitLap / laps) * 100;
                 if (posPct < 98) {
-                    timeline.innerHTML += `<div class="pit-marker" style="left: ${posPct}%;"></div>
-                                           <div class="pit-label" style="left: ${posPct}%;">PIT L${pitLap}</div>`;
+                    timeline.innerHTML += `
+                        <div class="pit-marker" style="left: ${posPct}%;"></div>
+                        <div class="pit-label" style="left: ${posPct}%;">PIT L${pitLap}</div>
+                    `;
                 }
             }
         }
 
+        // Helper: Precise Average Calculation
+        function stopsToAvg(totalLaps, stops) {
+            return totalLaps / (stops + 1);
+        }
+
         updateLab();
+        // // STRATEGY LAB PRO END
     </script>
 </body>
 </html>
