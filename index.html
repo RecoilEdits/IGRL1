@@ -398,7 +398,7 @@
                     <h2 class="font-impact text-6xl italic text-white mb-2">STRATEGY <span class="text-emerald-500">LAB PRO</span></h2>
                     <p class="text-zinc-500 text-[10px] font-black uppercase tracking-[0.4em] flex items-center gap-2">
                         <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        NASCAR 25 Steam Sim Engine Active
+                        NASCAR 25 Beta IGRL Stradegy Lab WIP
                     </p>
                 </div>
             </div>
@@ -732,6 +732,22 @@
         });
 
 
+        // PRO STRATEGY LAB GLOBAL STATE
+        let stageLogicEnabled = false;
+
+        function toggleStage() {
+            stageLogicEnabled = !stageLogicEnabled;
+            const btn = document.getElementById('stage-toggle');
+            const inputs = document.getElementById('stage-inputs');
+            if(stageLogicEnabled) {
+                btn.innerText = "ON"; btn.className = "px-4 py-1.5 bg-yellow-600 text-[9px] font-black rounded uppercase border border-yellow-500 text-white transition-all";
+                inputs.classList.remove('hidden');
+            } else {
+                btn.innerText = "OFF"; btn.className = "px-4 py-1.5 bg-zinc-800 text-[9px] font-black rounded uppercase border border-zinc-700 text-zinc-400 hover:text-white transition-all";
+                inputs.classList.add('hidden');
+            }
+            updateLab();
+        }
 
 
         // // STRATEGY LAB PRO START
