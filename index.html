@@ -1356,8 +1356,8 @@ window.onload = function() {
 };
 // STRATEGY LAB PRO END
 
-/** * IRON GRIP DATA CORE v2.1 
- * Auto-detects columns and handles Google Auth/CORS issues
+/** * IRON GRIP NEURAL LINK v5.0 | HYPER-ELITE DATA CORE
+ * Features: Raw Buffer Sanitization, Fuzzy Logic Parsing, & Direct Uplink
  */
 
 const SHEET_CONFIG = {
@@ -1365,119 +1365,184 @@ const SHEET_CONFIG = {
     xfinity: "https://docs.google.com/spreadsheets/d/e/2PACX-1vRPIqR_e5XKwFdlUSvcSSUyVgfdp3OWjLZgkYZi7lptGstgQnlmglCRW4wwdGXQlQAmlvBCEzk9MSq8/pub?output=csv"
 };
 
+const RACE_METADATA = [
+    {
+        series: 'CUP',
+        event: 'THE BRISTOL NIGHT RACE',
+        track: 'BRISTOL MOTOR SPEEDWAY',
+        date: 'MAR 02, 2024',
+        stewardNotes: 'Aggressive bump-and-run on Lap 242. No penalty assessed. Post-race inspection: PASS.',
+        ytId: 'dQw4w9WgXcQ', 
+        thumb: 'https://images.unsplash.com/photo-1541443131876-44b03de101c5?q=80&w=1000'
+    },
+    {
+        series: 'XFINITY',
+        event: 'DAYTONA 250 OPENER',
+        track: 'DAYTONA INTERNATIONAL',
+        date: 'FEB 24, 2024',
+        stewardNotes: 'Multiple bump-drafting violations in Stage 2. Multi-car incident involving P4 and P12 on final lap.',
+        ytId: 'dQw4w9WgXcQ',
+        thumb: 'https://images.unsplash.com/photo-1532906630236-7bb66f96cee5?q=80&w=1000'
+    }
+];
+
 async function fetchLeagueData() {
     const statusText = document.getElementById('uplink-status');
     const statusLight = document.getElementById('status-light');
 
     try {
-        console.log("Uplink: Initializing handshake...");
+        // Cache busting with high-resolution timestamp
+        const cacheBuster = "&cb=" + performance.now();
         
         const [cupRes, xfinRes] = await Promise.all([
-            fetch(SHEET_CONFIG.cup).then(r => r.text()),
-            fetch(SHEET_CONFIG.xfinity).then(r => r.text())
+            fetch(SHEET_CONFIG.cup + cacheBuster).then(r => r.text()),
+            fetch(SHEET_CONFIG.xfinity + cacheBuster).then(r => r.text())
         ]);
 
-        const cupData = smartParse(cupRes);
-        const xfinData = smartParse(xfinRes);
+        const cupData = hyperParse(cupRes);
+        const xfinData = hyperParse(xfinRes);
 
-        console.log("Uplink: Data Received", { cupData, xfinData });
-
-        // Update UI with Auto-Detected Name/Points
-        const cupLead = cupData[0];
-        const xfinLead = xfinData[0];
-
-        if (cupLead) document.getElementById('cup-leader').innerText = cupLead.display_name || "---";
-        if (xfinLead) document.getElementById('xfinity-leader').innerText = xfinLead.display_name || "---";
+        // UI Injection
+        if (cupData.length > 0) document.getElementById('cup-leader').innerText = cupData[0].display_name;
+        if (xfinData.length > 0) document.getElementById('xfinity-leader').innerText = xfinData[0].display_name;
         
-        statusLight.className = "w-3 h-3 rounded-full bg-green-500 shadow-[0_0_10px_#10b981]";
-        statusText.innerText = "Neural Link Established. Standings Synchronized.";
+        statusLight.className = "w-3 h-3 rounded-full bg-green-500 shadow-[0_0_15px_#10b981]";
+        statusText.innerText = "Uplink Secure. Neural Data Synchronized.";
 
         renderArchive(cupData, xfinData);
     } catch (err) {
-        console.error("Uplink Critical Failure:", err);
-        statusLight.className = "w-3 h-3 rounded-full bg-red-600 animate-pulse";
-        statusText.innerText = "Uplink Error: Check Console (F12) for details.";
-        
-        // Fallback: Render UI even if data fails
+        console.error("DATA CORE CRITICAL ERROR:", err);
+        statusLight.className = "w-3 h-3 rounded-full bg-red-600 animate-pulse shadow-[0_0_15px_#ef4444]";
+        statusText.innerText = "UPLINK DEGRADED: REBOOTING...";
         renderArchive([], []);
     }
 }
 
-function smartParse(csv) {
-    if (!csv) return [];
-    
-    // Split by lines and remove quotes that Google adds
-    const lines = csv.split('\n').map(line => line.replace(/"/g, ''));
-    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-    
-    // Find column indexes automatically
-    const nameIdx = headers.findIndex(h => h.includes('name') || h.includes('driver'));
-    const pointsIdx = headers.findIndex(h => h.includes('points') || h.includes('pts'));
+/**
+ * HyperParse: Cleans Google's raw text stream and converts to JSON
+ * Handles: Hidden Quotes, Byte Order Marks (BOM), and Row Misalignment
+ */
+function hyperParse(rawText) {
+    if (!rawText) return [];
 
-    return lines.slice(1).map(line => {
-        const columns = line.split(',');
-        return {
-            display_name: columns[nameIdx] || "Unknown Driver",
-            points: columns[pointsIdx] || "0",
-            raw: columns // Keep everything else just in case
-        };
-    }).filter(row => row.display_name !== "Unknown Driver");
+    // Clean invisible Byte Order Marks and split by lines
+    const lines = rawText.replace(/\uFEFF/g, '').split(/\r?\n/);
+    if (lines.length < 2) return [];
+
+    // Process headers: strip quotes, trim whitespace, lowercase for fuzzy matching
+    const headers = lines[0].split(',').map(h => h.replace(/^"|"$/g, '').trim().toLowerCase());
+    
+    // Fuzzy logic to find the right columns
+    const nIdx = headers.findIndex(h => h.includes('name') || h.includes('driver'));
+    const pIdx = headers.findIndex(h => h.includes('pts') || h.includes('point') || h.includes('total'));
+
+    const results = [];
+    for (let i = 1; i < lines.length; i++) {
+        const row = lines[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/); // RegEx to ignore commas inside quotes
+        if (row.length < 2) continue;
+
+        const name = row[nIdx]?.replace(/^"|"$/g, '').trim();
+        const pts = parseInt(row[pIdx]?.replace(/^"|"$/g, '').trim()) || 0;
+
+        if (name && name !== "" && name.toLowerCase() !== "name") {
+            results.push({ display_name: name.toUpperCase(), points: pts });
+        }
+    }
+
+    // Sort by points descending
+    return results.sort((a, b) => b.points - a.points);
 }
 
 function renderArchive(cupStandings, xfinStandings) {
-    const grid = document.getElementById('archive-grid');
-    if (!grid) return;
+    const container = document.getElementById('archive-grid');
+    if (!container) return;
 
-    grid.innerHTML = RACE_METADATA.map(race => {
+    container.innerHTML = RACE_METADATA.map(race => {
         const isCup = race.series === 'CUP';
         const standings = isCup ? cupStandings : xfinStandings;
         const color = isCup ? 'red' : 'blue';
+        const borderColor = isCup ? '#ff004033' : '#0084ff33';
         
         return `
-            <div class="group relative bg-zinc-950/80 border border-zinc-800 rounded-xl overflow-hidden hover:border-${color}-600/50 transition-all duration-700">
-                <div class="flex justify-between items-center px-6 py-3 bg-zinc-900/30 border-b border-zinc-800/50">
+            <div class="group relative bg-black/40 backdrop-blur-sm border border-zinc-800/50 rounded-2xl overflow-hidden hover:border-${color}-600/50 transition-all duration-1000">
+                <div class="flex justify-between items-center px-6 py-4 bg-zinc-900/40 border-b border-zinc-800/30">
                     <div class="flex items-center gap-3">
-                        <span class="text-[10px] font-black text-zinc-500 tracking-[0.3em]">REC_LOG_${race.series}</span>
+                        <div class="flex gap-1">
+                            <div class="w-1 h-3 bg-${color}-600 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                            <div class="w-1 h-3 bg-${color}-600 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                            <div class="w-1 h-3 bg-${color}-600 rounded-full animate-bounce" style="animation-delay: 0.3s"></div>
+                        </div>
+                        <span class="text-[9px] font-black text-zinc-500 tracking-[0.4em] uppercase">SYSTEM_ARCHIVE_0${race.series}</span>
                     </div>
-                    <span class="font-racing text-[10px] text-${color}-500 italic uppercase">${race.series} PREMIER</span>
+                    <span class="font-impact text-xs text-${color}-500 italic uppercase tracking-widest">${race.series} LEAGUE</span>
                 </div>
 
                 <div class="relative aspect-video">
-                    <img src="${race.thumb}" class="w-full h-full object-cover opacity-30 grayscale group-hover:grayscale-0 group-hover:opacity-60 transition-all duration-1000">
-                    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent"></div>
-                    <div class="absolute inset-0 flex items-center justify-center p-8">
-                        <a href="https://youtube.com/watch?v=${race.ytId}" target="_blank" class="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center backdrop-blur-xl hover:scale-110 hover:bg-${color}-600 transition-all duration-500">
-                            <i class="fas fa-play text-white text-sm ml-1"></i>
+                    <img src="${race.thumb}" class="w-full h-full object-cover opacity-20 group-hover:opacity-50 transition-all duration-1000 group-hover:scale-105">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                    
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <a href="https://youtube.com/watch?v=${race.ytId}" target="_blank" 
+                           class="w-20 h-20 rounded-full border border-white/5 flex items-center justify-center backdrop-blur-md bg-white/5 hover:bg-${color}-600 hover:scale-110 transition-all duration-500 group/play">
+                            <i class="fas fa-play text-white text-xl ml-1 transition-transform group-hover/play:scale-125"></i>
                         </a>
                     </div>
-                    <div class="absolute bottom-6 left-8">
-                        <h3 class="font-impact text-4xl italic text-white leading-none mb-2 uppercase">${race.event}</h3>
-                        <p class="text-zinc-500 text-[10px] font-black tracking-[0.4em] uppercase">${race.track}</p>
+
+                    <div class="absolute bottom-6 left-8 pointer-events-none">
+                        <h3 class="font-impact text-5xl italic text-white leading-tight uppercase tracking-tighter">${race.event}</h3>
+                        <p class="text-zinc-500 text-[10px] font-black tracking-[0.5em] uppercase mt-1">${race.track} // ${race.date}</p>
                     </div>
                 </div>
 
-                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-zinc-900">
+                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-10 bg-gradient-to-b from-transparent to-zinc-900/20">
                     <div class="space-y-4">
-                        <p class="text-[10px] font-black text-white uppercase tracking-widest border-l-2 border-${color}-600 pl-3">Race Steward Report</p>
-                        <p class="text-xs text-zinc-400 leading-relaxed italic">"${race.stewardNotes}"</p>
+                        <div class="flex items-center gap-3">
+                            <div class="h-[1px] w-8 bg-${color}-600"></div>
+                            <p class="text-[10px] font-black text-white uppercase tracking-widest">Incident Report</p>
+                        </div>
+                        <p class="text-xs text-zinc-400 leading-relaxed font-medium italic opacity-80 pl-4 border-l border-zinc-800">
+                            "${race.stewardNotes}"
+                        </p>
                     </div>
 
-                    <div class="space-y-3">
-                        <p class="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Live Standings</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Standings Sync</p>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[8px] font-bold text-green-500 uppercase tracking-widest">Real-Time</span>
+                                <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                            </div>
+                        </div>
                         <div class="space-y-2">
                             ${standings.length > 0 ? standings.slice(0, 3).map((driver, i) => `
-                                <div class="flex justify-between items-center text-[11px] bg-black/40 p-2 rounded border border-zinc-900">
-                                    <span class="font-racing text-${color}-500">P${i+1} <span class="text-white ml-2 font-impact italic uppercase">${driver.display_name}</span></span>
-                                    <span class="text-zinc-500 font-mono">${driver.points}</span>
+                                <div class="flex justify-between items-center bg-zinc-900/60 p-3 rounded-lg border border-zinc-800/50 hover:border-${color}-600/40 transition-all">
+                                    <div class="flex items-center gap-3">
+                                        <span class="font-racing text-${color}-600 text-sm">#${i+1}</span>
+                                        <span class="text-white font-impact italic uppercase tracking-wider text-sm">${driver.display_name}</span>
+                                    </div>
+                                    <span class="text-zinc-500 font-mono font-bold text-xs">${driver.points} <span class="text-[8px] text-zinc-700">PTS</span></span>
                                 </div>
-                            `).join('') : '<p class="text-[10px] text-zinc-700 italic">No live data available</p>'}
+                            `).join('') : `
+                                <div class="border-2 border-dashed border-zinc-900 p-6 rounded-xl flex flex-col items-center justify-center opacity-30">
+                                    <i class="fas fa-satellite-dish mb-2 text-zinc-700"></i>
+                                    <p class="text-[10px] font-black text-zinc-700 tracking-widest">OFFLINE</p>
+                                </div>
+                            `}
                         </div>
                     </div>
+                </div>
+                
+                <div class="px-8 pb-8 flex gap-3">
+                    <button class="flex-1 py-4 bg-zinc-900/80 hover:bg-zinc-800 text-[10px] font-black uppercase tracking-[0.3em] text-white rounded-xl border border-zinc-800 transition-all hover:translate-y-[-2px]">Download Logs</button>
+                    <button class="flex-1 py-4 bg-${color}-600/10 hover:bg-${color}-600 text-[10px] font-black uppercase tracking-[0.3em] text-white rounded-xl border border-${color}-600/50 transition-all hover:translate-y-[-2px] shadow-lg shadow-${color}-900/20">Full Standings</button>
                 </div>
             </div>
         `;
     }).join('');
 }
+
+// Initial Launch Sequence
+document.addEventListener('DOMContentLoaded', fetchLeagueData);
 </script>
 </body>
 </html>
